@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
@@ -17,7 +18,10 @@ handler = WebhookHandler(Channel_secret)
 
 # Set up Google Sheets connection
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name(r"C:\Users\frame\Desktop\ITEL_STEX BOT\linestexbot-eb775214f1f8.json", scope)
+
+# Use relative path for JSON keyfile
+json_keyfile_path = os.path.join(os.path.dirname(__file__), 'path_to_json', 'linestexbot-eb775214f1f8.json')
+creds = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile_path, scope)
 
 try:
     client = gspread.authorize(creds)
