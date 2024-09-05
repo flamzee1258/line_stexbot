@@ -1,17 +1,23 @@
-import os
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from dotenv import load_dotenv
+import os
 import re
+import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
 # Set up LINE API
-Channel_secret = '4149f80e24994205cac683dafb0ab028'
-Channel_access_token = 'fAR6zSOsmu81owGMUVzhwdZyGzaxrjFUDk7KF60dPDp87sU0fP22QyW63IC7bpgjfttIzstZekpxeQR4xW+5VA/I/5VfikTiY6m3jIELHM77k80MLamj5jPkQiYnmuKNjtN8vvhO9T5el6vsvHn+TwdB04t89/1O/w1cDnyilFU='
+Channel_secret = os.getenv('LINE_CHANNEL_SECRET', 'default_secret')
+Channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', 'default_access_token')
 
 line_bot_api = LineBotApi(Channel_access_token)
 handler = WebhookHandler(Channel_secret)
@@ -19,10 +25,11 @@ handler = WebhookHandler(Channel_secret)
 # Set up Google Sheets connection
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
-# Use relative path for JSON keyfile
-json_keyfile_path = os.path.join(os.path.dirname(__file__), 'path_to_json', 'linestexbot-eb775214f1f8.json')
-creds = ServiceAccountCredentials.from_json_keyfile_name(json_keyfile_path, scope)
+# Load JSON credentials from environment variable
+json_creds = os.getenv('GOOGLE_CREDENTIALS')
+creds_dict = json.loads(json_creds)
 
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 try:
     client = gspread.authorize(creds)
     sheet = client.open_by_key("14gzrAAgOd8I3NnyXQtd4J9gHkuyrDL_uD3sV7K4S0qo").sheet1
