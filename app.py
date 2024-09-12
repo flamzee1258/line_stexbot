@@ -30,7 +30,7 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 # Load JSON credentials from environment variable
 json_creds = os.getenv("GOOGLE_CREDENTIALS_JSON", "{}")
 creds_dict = json.loads(json_creds)
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scop
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 try:
     client = gspread.authorize(creds)
