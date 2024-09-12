@@ -26,13 +26,11 @@ handler = WebhookHandler(Channel_secret)
 
 # Set up Google Sheets connection
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-json_creds = os.getenv("GOOGLE_CREDENTIALS_JSON")
 
-if not json_creds:
-    raise ValueError("GOOGLE_CREDENTIALS_JSON must be set in the environment.")
-
+# Load JSON credentials from environment variable
+json_creds = os.getenv("GOOGLE_CREDENTIALS_JSON", "{}")
 creds_dict = json.loads(json_creds)
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scop
 
 try:
     client = gspread.authorize(creds)
